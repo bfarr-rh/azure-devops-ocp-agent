@@ -13,7 +13,7 @@ ENV OPENSHIFT_4_CLIENT_BINARY_URL=https://mirror.openshift.com/pub/openshift-v4/
 
 WORKDIR /
 USER root
-RUN dnf install git
+RUN dnf install -y git
 # Make directories for azure and tools
 RUN mkdir -p "$AZP_WORK"
 RUN mkdir -p /azp/agent/_diag
