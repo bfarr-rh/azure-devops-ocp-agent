@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: azure-devops-ocp-agent-bc-template
+  annotations:
+    description: "Azure Devops Openshift self hosted agent buildconfig"
+    tags: "azure-devops-ocp-agent"
+  description: Build your custom Azure Agent for an OpenShift cluster.
+  iconClass: icon-dotnet
+parameters:
+- description: GIT URL For Dockerfile
+  name: GIT_URL
+  required: true
+  value: https://github.com/bfarr-rh/azure-devops-ocp-agent.git
+- description: OpenShift client binary version to install
+  name: OPENSHIFT_VERSION
+  value: "4.9.7"
+- description: Azure agent install version
+  name: AZP_AGENT_VERSION
+  value: "2.187.2"
+objects:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      build: azure-devops-ocp-agent
+    name: azure-devops-ocp-agent
+  spec:
+    lookupPolicy:
+      local: false
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    labels:
+      build: azure-devops-ocp-agent
+    name: azure-devops-ocp-agent
+  spec:
+    source:
+      git:
+        uri: ${GIT_URL}
+      type: Git
+    output:
+      to:
+        kind: ImageStreamTag
+        name: azure-devops-ocp-agent:latest
+    strategy:
+      dockerStrategy:
+        dockerfilePath: Dockerfile
+        env:
+          - name: OPENSHIFT_VERSION
+            value: "${OPENSHIFT_VERSION}"
+          - name: AZP_AGENT_VERSION
+            value: "${AZP_AGENT_VERSION}"
+      type: Docker
