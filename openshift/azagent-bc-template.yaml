@@ -5,8 +5,9 @@ metadata:
   annotations:
     description: "Azure Devops Openshift self hosted agent buildconfig"
     tags: "azure-devops-ocp-agent"
-  description: Build your custom Azure Agent for an OpenShift cluster.
-  iconClass: icon-dotnet
+    iconClass: icon-dotnet
+  description: Build your custom Azure Agent for an OpenShift cluster.""
+  
 parameters:
 - description: GIT URL For Dockerfile
   name: GIT_URL
@@ -27,7 +28,7 @@ objects:
     name: azure-devops-ocp-agent
   spec:
     lookupPolicy:
-      local: false
+      local: true
 - kind: BuildConfig
   apiVersion: v1
   metadata:
