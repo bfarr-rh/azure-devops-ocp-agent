@@ -1,9 +1,9 @@
 FROM registry.access.redhat.com/ubi8/nodejs-12:1-101
 # These should be set to interact with Azure service
-ENV AZP_URL=
-ENV AZP_POOL=
-ENV AZP_TOKEN=
-ENV AZP_AGENT_NAME=
+ENV AZP_URL=http://dummyurl
+ENV AZP_POOL=Default
+ENV AZP_TOKEN=token
+ENV AZP_AGENT_NAME=myagent
 # If a working directory was specified, create that directory
 ENV AZP_WORK=/_work
 ENV AZP_AGENT_VERSION=2.187.2
@@ -25,7 +25,7 @@ RUN curl  ${OPENSHIFT_4_CLIENT_BINARY_URL} > {OPENSHIFT_BINARY_FILE} && tar xzf 
 RUN chmod +x /usr/local/bin/oc 
 
 #Install hostname for current script support
-RUN dnf install hostname -y
+
 # Download and extract the agent package
 RUN curl https://vstsagentpackage.azureedge.net/agent/$AZP_AGENT_VERSION/vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz > vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz \
      && tar zxvf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz && rm -rf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz && rm -rf ./externals/node10 && rm -rf ./externals/node
@@ -34,8 +34,17 @@ RUN curl https://vstsagentpackage.azureedge.net/agent/$AZP_AGENT_VERSION/vsts-ag
 RUN /bin/bash -c 'chmod +x ./bin/installdependencies.sh'
 RUN /bin/bash -c './bin/installdependencies.sh'
 
-# Configure the agent as the sudo (non-root) user
-
+# Configure the agent to set up directories with root
+RUN /azp/agent/bin/Agent.Listener configure --unattended \
+  --agent "${AZP_AGENT_NAME}" \
+  --url "$AZP_URL" \
+  --auth PAT \
+  --token "$AZP_TOKEN" \
+  --pool "${AZP_POOL:-Default}" \
+  --work /_work \
+  --replace \
+  --acceptTeeEula
+  
 RUN chown -R 1001:root "$AZP_WORK"
 RUN chmod -R 775 /azp
 RUN chown -R 1001:root /azp
@@ -43,7 +52,7 @@ USER 1001
 
 # AgentService.js understands how to handle agent self-update and restart
 ENTRYPOINT /bin/bash -c '/azp/agent/bin/Agent.Listener configure --unattended \
-  --agent "${AZP_AGENT_NAME:-$(hostname)}" \
+  --agent "${AZP_AGENT_NAME}" \
   --url "$AZP_URL" \
   --auth PAT \
   --token "$AZP_TOKEN" \
