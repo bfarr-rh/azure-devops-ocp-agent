@@ -28,7 +28,7 @@ RUN chmod +x /usr/local/bin/oc
 
 # Download and extract the agent package
 RUN curl https://vstsagentpackage.azureedge.net/agent/$AZP_AGENT_VERSION/vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz > vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz \
-     && tar zxvf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz && rm -rf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz && rm -rf ./externals/node10 && rm -rf ./externals/node
+     && tar zxvf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz && rm -rf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz 
 
 # Install the agent software
 RUN /bin/bash -c 'chmod +x ./bin/installdependencies.sh'
