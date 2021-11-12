@@ -50,7 +50,7 @@ ENTRYPOINT /bin/bash -c '/azp/agent/bin/Agent.Listener configure --unattended \
   --work /_work \
   --replace \
   --acceptTeeEula && \
-   node /azp/agent/bin/AgentService.js interactive --once'
+   /azp/agent/externals/node/bin/node /azp/agent/bin/AgentService.js interactive --once'
 
 
 
