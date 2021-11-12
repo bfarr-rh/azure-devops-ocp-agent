@@ -36,9 +36,9 @@ RUN /bin/bash -c './bin/installdependencies.sh'
 
 # Configure the agent as the sudo (non-root) user
 
-RUN chown -R 1001:1001 "$AZP_WORK"
+RUN chown -R 1001:root "$AZP_WORK"
 RUN chmod -R 775 /azp
-RUN chown -R 1001:1001 /azp
+RUN chown -R 1001:root /azp
 USER 1001
 
 # AgentService.js understands how to handle agent self-update and restart
