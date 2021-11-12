@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: azure-devops-ocp-agent-deployment-template
+  annotations:
+    description: "Azure DevOps Agent Deployment - First ensure you have built the image with the Build Template"
+    tags: "azure-agent"
+    iconClass: "icon-dotnet"
+parameters:
+- description: Image to use
+  name: IMAGE
+  required: false
+  value: "azure-devops-ocp-agent:latest"
+- description: CPU Limit
+  name: CPU_LIMIT
+  required: false
+  value: "500m"
+- description: Memory limit
+  name: MEMORY_LIMIT
+  required: false
+  value: "500Mi"
+- description: Azure DevOps instance
+  name: AZP_URL
+  required: true  
+- description: Azure DevOps Pool name
+  name: AZP_POOL
+  required: true
+  value: ""
+- description: Azure DevOps Agent Personal Access Token
+  name: AZP_TOKEN
+  required: true
+- description: Azure Agent name
+  name: AZP_AGENT_NAME
+  required: true
+  value: "my-ocp-agent"
+objects:
+- apiVersion: v1
+  stringData:
+    AZP_TOKEN: ${AZP_TOKEN}
+  kind: Secret
+  metadata:
+    name: azdevops-secret
+  type: Opaque
+- apiVersion: v1
+  data:
+    AZP_URL: ${AZP_URL}
+    AZP_POOL: ${AZP_POOL}
+    AZP_AGENT_NAME: ${AZP_AGENT_NAME}
+  kind: ConfigMap
+  metadata:
+    name: azdevops-cm
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: azdevops-deployment
+    labels:
+      app: azdevops-agent
+  spec:
+    replicas: 1 
+    selector:
+      matchLabels:
+        app: azdevops-agent
+    template:
+      metadata:
+        labels:
+          app: azdevops-agent
+      spec:
+        containers:
+        - name: azure-devops-ocp-agent
+          image: ${IMAGE}
+          imagePullPolicy: Always
+          env:
+            - name: AZP_AGENT_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: AZP_AGENT_NAME
+                  name: azdevops-cm
+            - name: AZP_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: AZP_URL
+                  name: azdevops-cm
+            - name: AZP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: azdevops-secret
+                  key: AZP_TOKEN
+            - name: AZP_POOL
+              valueFrom:
+                configMapKeyRef:
+                  name: azdevops-cm
+                  key: AZP_POOL
+          resources:
+            limits: 
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+        triggers:
+        - type: ConfigChange
+        - imageChangeParams:
+            automatic: true
+            containerNames:
+            - azure-devops-ocp-agent
+            from:
+              kind: ImageStreamTag
+              name: ${IMAGE}
+
+
