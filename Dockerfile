@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/nodejs-12:1-101
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.5-204 
 # These should be set to interact with Azure service
 ENV AZP_URL=http://dummyurl
 ENV AZP_POOL=Default
