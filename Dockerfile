@@ -15,13 +15,13 @@ WORKDIR /
 USER root
 # Make directories for azure and tools
 RUN mkdir -p "$AZP_WORK"
-RUN mkdir -p /azp/agent
+RUN mkdir -p /azp/agent/_diag
 RUN mkdir -p /usr/local/bin 
 WORKDIR /azp/agent
 
 # Get the oc binary
 
-RUN curl  ${OPENSHIFT_4_CLIENT_BINARY_URL} > {OPENSHIFT_BINARY_FILE} && tar xzf {OPENSHIFT_BINARY_FILE} -C /usr/local/bin &&  rm -rf ${OPENSHIFT_BINARY_FILE} 
+RUN curl  ${OPENSHIFT_4_CLIENT_BINARY_URL} > ${OPENSHIFT_BINARY_FILE} && tar xzf ${OPENSHIFT_BINARY_FILE} -C /usr/local/bin &&  rm -rf ${OPENSHIFT_BINARY_FILE} 
 RUN chmod +x /usr/local/bin/oc 
 
 #Install hostname for current script support
@@ -34,17 +34,7 @@ RUN curl https://vstsagentpackage.azureedge.net/agent/$AZP_AGENT_VERSION/vsts-ag
 RUN /bin/bash -c 'chmod +x ./bin/installdependencies.sh'
 RUN /bin/bash -c './bin/installdependencies.sh'
 
-# Configure the agent to set up directories with root
-RUN /azp/agent/bin/Agent.Listener configure --unattended \
-  --agent "${AZP_AGENT_NAME}" \
-  --url "$AZP_URL" \
-  --auth PAT \
-  --token "$AZP_TOKEN" \
-  --pool "${AZP_POOL:-Default}" \
-  --work /_work \
-  --replace \
-  --acceptTeeEula
-  
+RUN chmod -R 775 "$AZP_WORK" 
 RUN chown -R 1001:root "$AZP_WORK"
 RUN chmod -R 775 /azp
 RUN chown -R 1001:root /azp
@@ -56,7 +46,7 @@ ENTRYPOINT /bin/bash -c '/azp/agent/bin/Agent.Listener configure --unattended \
   --url "$AZP_URL" \
   --auth PAT \
   --token "$AZP_TOKEN" \
-  --pool "${AZP_POOL:-Default}" \
+  --pool "${AZP_POOL}" \
   --work /_work \
   --replace \
   --acceptTeeEula && \
