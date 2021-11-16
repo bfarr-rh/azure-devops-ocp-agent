@@ -47,6 +47,7 @@ objects:
     strategy:
       dockerStrategy:
         dockerfilePath: Dockerfile
+        imageOptimizationPolicy: SkipLayers
         env:
           - name: OPENSHIFT_VERSION
             value: "${OPENSHIFT_VERSION}"
