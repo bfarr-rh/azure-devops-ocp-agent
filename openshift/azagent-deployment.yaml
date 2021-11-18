@@ -7,6 +7,9 @@ metadata:
     tags: "azure-agent"
     iconClass: "icon-dotnet"
 parameters:
+- description: Namespace
+  name: NAMESPACE
+  required: true
 - description: Image to use
   name: IMAGE
   required: false
@@ -33,13 +36,35 @@ parameters:
   name: AZP_AGENT_NAME
   required: true
   value: "my-ocp-agent"
+- description: OpenShift Service Account
+  name: AZP_AGENT_SA
+  required: true
+  value: "azure-agent-sa"
 objects:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: "${AZP_AGENT_SA}"
+    namespace: "${NAMESPACE}"
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: ${AZP_AGENT_SA}-edit-role
+    namespace: "${NAMESPACE}"
+  roleRef:
+    name: "edit"
+    apiGroup: ""
+    kind: ClusterRole
+  subjects:
+  - kind: ServiceAccount
+    name: "${AZP_AGENT_SA}"
 - apiVersion: v1
   stringData:
     AZP_TOKEN: ${AZP_TOKEN}
   kind: Secret
   metadata:
     name: azdevops-secret
+    namespace: "${NAMESPACE}"
   type: Opaque
 - apiVersion: v1
   data:
@@ -49,10 +74,12 @@ objects:
   kind: ConfigMap
   metadata:
     name: azdevops-cm
+    namespace: "${NAMESPACE}"
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
     name: azdevops-deployment
+    namespace: "${NAMESPACE}"
     labels:
       app: azdevops-agent
   spec:
@@ -65,6 +92,8 @@ objects:
         labels:
           app: azdevops-agent
       spec:
+        serviceAccountName: "${AZP_AGENT_SA}"
+        serviceAccount: "${AZP_AGENT_SA}"
         containers:
         - name: azure-devops-ocp-agent
           image: ${IMAGE}

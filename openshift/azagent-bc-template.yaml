@@ -9,6 +9,9 @@ metadata:
   description: Build your custom Azure Agent for an OpenShift cluster.""
   
 parameters:
+- description: Namespace
+  name: NAMESPACE
+  required: true
 - description: GIT URL For Dockerfile
   name: GIT_URL
   required: true
@@ -26,6 +29,7 @@ objects:
     labels:
       build: azure-devops-ocp-agent
     name: azure-devops-ocp-agent
+    namespace: "${NAMESPACE}"
   spec:
     lookupPolicy:
       local: true
@@ -35,6 +39,7 @@ objects:
     labels:
       build: azure-devops-ocp-agent
     name: azure-devops-ocp-agent
+    namespace: "${NAMESPACE}"
   spec:
     source:
       git:
