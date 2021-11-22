@@ -6,8 +6,8 @@ ENV AZP_TOKEN=token
 ENV AZP_AGENT_NAME=myagent
 # If a working directory was specified, create that directory
 ENV AZP_WORK=/_work
-ENV AZP_AGENT_VERSION=2.187.2
-ENV OPENSHIFT_VERSION=4.9.7
+ARG AZP_AGENT_VERSION=2.187.2
+ARG OPENSHIFT_VERSION=4.9.7
 ENV OPENSHIFT_BINARY_FILE="openshift-client-linux-${OPENSHIFT_VERSION}.tar.gz"
 ENV OPENSHIFT_4_CLIENT_BINARY_URL=https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${OPENSHIFT_VERSION}/${OPENSHIFT_BINARY_FILE}
 
