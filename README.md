@@ -15,7 +15,9 @@ https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-persona
 5. Create an OpenShift project
 6. Build the Azure Agent via the template
 7. Grant permissions to the service agent 
-oc policy add-role-to-user edit system:serviceaccount:<project_name>:azure-devops-sa
+oc policy add-role-to-user edit system:serviceaccount:<project_name>:azure-agent-sa
+8. You will probably need to add registry view or editor access to the service account as wel
+oc policy add-role-to-user registry-editor system:serviceaccount:<project_name>:azure-agent-sa
 
 Running the agent
 1. Launch the deployment template using parameters as required from what you setup in Pre-requisites
