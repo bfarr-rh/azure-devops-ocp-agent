@@ -7,7 +7,7 @@ Import the templates via an administrator login
 2. oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/azagent-deployment.yaml -n openshift
 
 Pre-requisites to setting this up are to determine parameter values
-1. Setup a project in Azure Devops and get the project based URL ($AZP_URL)
+1. Setup a project in Azure Devops and get the project based URL ($AZP_URL) . For example https://dev.azure.com/Organisation_Name
 2. Generate and use a PAT to connect an agent with Azure Pipelines  ($AZP_TOKEN)
 https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page
 3. Setup the Agent Pool ($AZP_POOL)
