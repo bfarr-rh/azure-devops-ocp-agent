@@ -43,7 +43,7 @@ USER 1001
 
 # AgentService.js understands how to handle agent self-update and restart
 ENTRYPOINT /bin/bash -c '/azp/agent/bin/Agent.Listener configure --unattended \
-  --agent "${AZP_AGENT_NAME}-${MY_POD_NAMESPACE}-${MY_POD_NAME}" \
+  --agent "${AZP_AGENT_NAME}-${MY_POD_NAME}" \
   --url "$AZP_URL" \
   --auth PAT \
   --token "$AZP_TOKEN" \
