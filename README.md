@@ -2,8 +2,9 @@
 A self hosted agent in OpenShift for Azure Devops
 
 Import the templates via an administrator login
-oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/azagent-bc-template.yaml -n openshift
-oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/azagent-deployment.yaml -n openshift
+
+1. oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/azagent-bc-template.yaml -n openshift
+2. oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/azagent-deployment.yaml -n openshift
 
 Pre-requisites to setting this up are to determine parameter values
 1. Setup a project in Azure Devops and get the project based URL ($AZP_URL)
