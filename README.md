@@ -23,8 +23,14 @@ Running the agent
 1. Launch the deployment template using parameters as required from what you setup in Pre-requisites
 2. The Agent should connect to Azure Project and be ready to accept Jobs
 3. When developing an azure pipeline, rather than using the default pool setup use within the pipeline
+For example where the pool name is OpenShift-Agent, your pipeline yaml file will start with something like below.
+```` 
+trigger:
+- master
+
 pool:
-  name: <Agent Pool name>
+  name: 'OpenShift-Agent'
+```` 
   
 4. The agent has the oc tool installed running with permissions granted to the service account, use oc commands to interact with the build process. 
 5. As a default the agent will checkout the code so this will be already present in the agent container
