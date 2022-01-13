@@ -16,9 +16,16 @@ https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/pools-queues?view
 These steps will create a project and service account with permissions to run the agent. The project will be the namespace in which the azure agent will run.
 Import the templates via an administrator login
 
-1. oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/azagent-bc-template.yaml -n openshift
-2. oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/azagent-deployment.yaml -n openshift
-3. Create an OpenShift project
+1. Import the build agent template into the openshift project. This will make an icon and selectable template from the developer view.
+```` 
+oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/azagent-bc-template.yaml -n openshift
+```` 
+2. Import the deployment template for the agent
+```` 
+oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/azagent-deployment.yaml -n openshift
+```` 
+3. Create an OpenShift project where the agent will run.
+
 4. Build the Azure Agent via the template (azagent-bc-template.yaml). The following parameters may need to be adjusted OPENSHIFT_VERSION, AZP_AGENT_VERSION depending on the openshift version and the azure agent version you want to use. The openshift version determines the oc client version that will be installed. The Azure Agent Version can be adjusted, release details can be found here https://github.com/microsoft/azure-pipelines-agent/releases. 
 
 ```` 
@@ -29,10 +36,14 @@ Import the templates via an administrator login
   name: AZP_AGENT_VERSION
   value: "2.187.2"
 ```` 
-6. Grant permissions to the service agent 
+5. Grant permissions to the service agent 
+```` 
 oc policy add-role-to-user edit system:serviceaccount:<project_name>:azure-agent-sa
-6. You will probably need to add registry view or editor access to the service account as wel
+```` 
+6. You will probably need to add registry view or editor access to the service account as well
+```` 
 oc policy add-role-to-user registry-editor system:serviceaccount:<project_name>:azure-agent-sa
+```` 
 
 # Deploying & Running the agent
 This is the final step and will require the parameters $AZP_URL, $AZP_TOKEN, $AZP_POOL as a minimum to deploy the agent and connect to your organisation in AzureDevOps.
@@ -50,6 +61,9 @@ pool:
 ```` 
   
 4. The agent has the oc tool installed running with permissions granted to the service account, use oc commands to interact with the build process. 
+Sample pipeline can be found here
+https://github.com/bfarr-rh/dot-net-examples/blob/master/azure-pipelines.yml
+
 5. As a default the agent will checkout the code so this will be already present in the agent container
 6. The Agent is set to complete with each job and will be restarted by OpenShift
   
