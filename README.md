@@ -36,21 +36,21 @@ oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/m
   name: AZP_AGENT_VERSION
   value: "2.187.2"
 ```` 
-5. Grant permissions to the service agent 
-```` 
-oc policy add-role-to-user edit system:serviceaccount:<project_name>:azure-agent-sa
-```` 
-6. You will probably need to add registry view or editor access to the service account as well
-```` 
-oc policy add-role-to-user registry-editor system:serviceaccount:<project_name>:azure-agent-sa
-```` 
 
 # Deploying & Running the agent
 This is the final step and will require the parameters $AZP_URL, $AZP_TOKEN, $AZP_POOL as a minimum to deploy the agent and connect to your organisation in AzureDevOps.
 
 1. Launch the Deployment Template using parameters as required from what you setup in Pre-requisites
 2. The Agent should connect to Azure Project and be ready to accept Jobs
-3. When developing an azure pipeline, rather than using the default pool setup use within the pipeline
+3. Grant permissions to the service agent 
+```` 
+oc policy add-role-to-user edit system:serviceaccount:<project_name>:azure-agent-sa
+```` 
+4. You will probably need to add registry view or editor access to the service account as well
+```` 
+oc policy add-role-to-user registry-editor system:serviceaccount:<project_name>:azure-agent-sa
+```` 
+5. When developing an azure pipeline, rather than using the default pool setup use within the pipeline
 For example where the pool name is OpenShift-Agent, your pipeline yaml file will start with something like below.
 ```` 
 trigger:
