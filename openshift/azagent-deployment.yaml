@@ -82,6 +82,9 @@ objects:
     namespace: "${NAMESPACE}"
     labels:
       app: azdevops-agent
+    annotations:
+      image.openshift.io/triggers: >-
+        [{"from":{"kind":"ImageStreamTag","name":"azure-devops-ocp-agent:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"azure-devops-ocp-agent\")].image"}]
   spec:
     replicas: 1 
     selector:
