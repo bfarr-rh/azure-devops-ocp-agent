@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: azure-devops-ocp-agent-bc-template
@@ -6,7 +6,7 @@ metadata:
     description: "Azure Devops Openshift self hosted agent buildconfig"
     tags: "azure-devops-ocp-agent"
     iconClass: icon-dotnet
-  description: Build your custom Azure Agent for an OpenShift cluster.""
+  description: "Build your custom Azure Agent for an OpenShift cluster."
   
 parameters:
 - description: Namespace
@@ -53,7 +53,7 @@ objects:
       dockerStrategy:
         dockerfilePath: Dockerfile
         imageOptimizationPolicy: SkipLayers
-        env:
+        buildArgs:
           - name: OPENSHIFT_VERSION
             value: "${OPENSHIFT_VERSION}"
           - name: AZP_AGENT_VERSION
