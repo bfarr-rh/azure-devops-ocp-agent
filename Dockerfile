@@ -13,7 +13,8 @@ ENV OPENSHIFT_BINARY_FILE="openshift-client-linux-${OPENSHIFT_VERSION}.tar.gz" \
     OPENSHIFT_4_CLIENT_BINARY_URL=https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${OPENSHIFT_VERSION}/${OPENSHIFT_BINARY_FILE} \
     _BUILDAH_STARTED_IN_USERNS="" \
     BUILDAH_ISOLATION=chroot \
-    STORAGE_DRIVER=vfs
+    STORAGE_DRIVER=vfs \
+    HOME=/home/podman
 
 USER root
 
@@ -38,27 +39,31 @@ RUN dnf update -y && \
     mkdir -p /azp/agent/_diag && \
     mkdir -p /usr/local/bin 
 
-WORKDIR /azp/agent
+WORKDIR $HOME
 
 # Get the oc binary
-
 RUN curl  ${OPENSHIFT_4_CLIENT_BINARY_URL} > ${OPENSHIFT_BINARY_FILE} && \
     tar xzf ${OPENSHIFT_BINARY_FILE} -C /usr/local/bin &&  \
     rm -rf ${OPENSHIFT_BINARY_FILE} && \
     chmod +x /usr/local/bin/oc 
 
+# Configure Azure specific JDK variables
+ENV JAVA_HOME_8_X64=/etc/alternatives/java_sdk_1.8.0 \
+    JAVA_HOME_11_X64=/etc/alternatives/java_sdk_11
+        
 # Download and extract the agent package
-RUN curl https://vstsagentpackage.azureedge.net/agent/$AZP_AGENT_VERSION/vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz > vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz \
-     && tar zxvf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz && rm -rf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz 
+RUN curl https://vstsagentpackage.azureedge.net/agent/$AZP_AGENT_VERSION/vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz > vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz && \
+    tar zxvf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz && \
+    rm -rf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz 
 
 # Install the agent software
-RUN /bin/bash -c 'chmod +x ./bin/installdependencies.sh'
-RUN /bin/bash -c './bin/installdependencies.sh'
+RUN /bin/bash -c 'chmod +x ./bin/installdependencies.sh' && \
+    /bin/bash -c './bin/installdependencies.sh' && \
+    chmod -R 775 "$AZP_WORK" && \
+    chown -R podman:root "$AZP_WORK" && \
+    chmod -R 775 /azp && \
+    chown -R podman:root /azp
 
-RUN chmod -R 775 "$AZP_WORK" 
-RUN chown -R podman:root "$AZP_WORK"
-RUN chmod -R 775 /azp
-RUN chown -R podman:root /azp
 USER 1000
 
 # AgentService.js understands how to handle agent self-update and restart
