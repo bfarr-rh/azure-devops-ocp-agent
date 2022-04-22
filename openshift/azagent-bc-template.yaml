@@ -53,7 +53,7 @@ objects:
       dockerStrategy:
         dockerfilePath: Dockerfile
         imageOptimizationPolicy: SkipLayers
-        env:
+        buildArgs:
           - name: OPENSHIFT_VERSION
             value: "${OPENSHIFT_VERSION}"
           - name: AZP_AGENT_VERSION
