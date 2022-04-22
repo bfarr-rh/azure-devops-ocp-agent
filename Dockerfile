@@ -21,7 +21,6 @@ USER root
 # Setup for azure and tools
 RUN dnf update -y && \
     dnf install -y --setopt=tsflags=nodocs git skopeo podman-docker --exclude container-selinux && \
-    dnf install -y --setopt=tsflags=nodocs java-1.8.0-openjdk-devel java-11-openjdk-devel && \
     dnf clean all && \
     chown -R podman:0 /home/podman && \
     chmod -R 775 /home/podman && \
@@ -51,10 +50,6 @@ RUN tar xzf ${OPENSHIFT_BINARY_FILE} -C /usr/local/bin
 RUN rm -rf ${OPENSHIFT_BINARY_FILE}
 RUN chmod +x /usr/local/bin/oc 
 
-# Configure Azure specific JDK variables
-ENV JAVA_HOME_8_X64=/etc/alternatives/java_sdk_1.8.0 \
-    JAVA_HOME_11_X64=/etc/alternatives/java_sdk_11
-        
 # Download and extract the agent package
 RUN curl https://vstsagentpackage.azureedge.net/agent/$AZP_AGENT_VERSION/vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz > vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz && \
     tar zxvf vsts-agent-linux-x64-$AZP_AGENT_VERSION.tar.gz && \
