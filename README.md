@@ -49,8 +49,13 @@ oc policy add-role-to-user edit system:serviceaccount:<project_name>:azure-agent
 4. You will probably need to add registry view or editor access to the service account as well
 ```` 
 oc policy add-role-to-user registry-editor system:serviceaccount:<project_name>:azure-agent-sa
-```` 
-5. When developing an azure pipeline, rather than using the default pool setup use within the pipeline
+````
+5. To get podman running correctly in openshift you'll need to add a custom scc
+````
+oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/nonrootbuilder-scc.yaml
+oc policy add-scc-to-user nonrootbuilder system:serviceaccount:<project_name>:azure-agent-sa
+````
+6. When developing an azure pipeline, rather than using the default pool setup use within the pipeline
 For example where the pool name is OpenShift-Agent, your pipeline yaml file will start with something like below.
 ```` 
 trigger:
@@ -60,12 +65,12 @@ pool:
   name: 'OpenShift-Agent'
 ```` 
   
-4. The agent has the oc tool installed running with permissions granted to the service account, use oc commands to interact with the build process. 
+7. The agent has the oc tool installed running with permissions granted to the service account, use oc commands to interact with the build process. 
 Sample pipeline can be found here
 https://github.com/bfarr-rh/dot-net-examples/blob/master/azure-pipelines.yml
 
-5. As a default the agent will checkout the code so this will be already present in the agent container
-6. The Agent is set to complete with each job and will be restarted by OpenShift
+8. As a default the agent will checkout the code so this will be already present in the agent container
+9. The Agent is set to complete with each job and will be restarted by OpenShift
   
 ## Scaling Agents
 The agent can be scaled using the Deployment, this is not fully tested , but each agent will register with its pod name as a suffix to ensure AzureDevops can register with a unique name.

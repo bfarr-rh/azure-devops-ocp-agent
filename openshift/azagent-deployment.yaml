@@ -94,6 +94,8 @@ objects:
       spec:
         serviceAccountName: "${AZP_AGENT_SA}"
         serviceAccount: "${AZP_AGENT_SA}"
+        securityContext:
+          runAsUser: 1000
         containers:
         - name: azure-devops-ocp-agent
           image: ${IMAGE}
