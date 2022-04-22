@@ -42,10 +42,8 @@ RUN dnf update -y && \
 WORKDIR $HOME
 
 # Get the oc binary
-RUN curl  ${OPENSHIFT_4_CLIENT_BINARY_URL} > ${OPENSHIFT_BINARY_FILE} && \
-    tar xzf ${OPENSHIFT_BINARY_FILE} -C /usr/local/bin &&  \
-    rm -rf ${OPENSHIFT_BINARY_FILE} && \
-    chmod +x /usr/local/bin/oc 
+RUN curl  ${OPENSHIFT_4_CLIENT_BINARY_URL} > ${OPENSHIFT_BINARY_FILE} && tar xzf ${OPENSHIFT_BINARY_FILE} -C /usr/local/bin && rm -rf ${OPENSHIFT_BINARY_FILE}
+RUN chmod +x /usr/local/bin/oc 
 
 # Configure Azure specific JDK variables
 ENV JAVA_HOME_8_X64=/etc/alternatives/java_sdk_1.8.0 \
