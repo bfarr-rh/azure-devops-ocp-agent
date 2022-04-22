@@ -37,12 +37,18 @@ RUN dnf update -y && \
     rm -f /var/logs/* && \
     mkdir -p "$AZP_WORK" && \
     mkdir -p /azp/agent/_diag && \
-    mkdir -p /usr/local/bin 
+    mkdir -p /usr/local/bin && \
+    chmod -R 775 "$AZP_WORK" && \
+    chown -R podman:root "$AZP_WORK" && \
+    chmod -R 775 /azp && \
+    chown -R podman:root /azp
 
-WORKDIR $HOME
+WORKDIR /azp/agent
 
 # Get the oc binary
-RUN curl  ${OPENSHIFT_4_CLIENT_BINARY_URL} > ${OPENSHIFT_BINARY_FILE} && tar xzf ${OPENSHIFT_BINARY_FILE} -C /usr/local/bin && rm -rf ${OPENSHIFT_BINARY_FILE}
+RUN curl  ${OPENSHIFT_4_CLIENT_BINARY_URL} > ${OPENSHIFT_BINARY_FILE} 
+RUN tar xzf ${OPENSHIFT_BINARY_FILE} -C /usr/local/bin
+RUN rm -rf ${OPENSHIFT_BINARY_FILE}
 RUN chmod +x /usr/local/bin/oc 
 
 # Configure Azure specific JDK variables
@@ -56,11 +62,7 @@ RUN curl https://vstsagentpackage.azureedge.net/agent/$AZP_AGENT_VERSION/vsts-ag
 
 # Install the agent software
 RUN /bin/bash -c 'chmod +x ./bin/installdependencies.sh' && \
-    /bin/bash -c './bin/installdependencies.sh' && \
-    chmod -R 775 "$AZP_WORK" && \
-    chown -R podman:root "$AZP_WORK" && \
-    chmod -R 775 /azp && \
-    chown -R podman:root /azp
+    /bin/bash -c './bin/installdependencies.sh'
 
 USER 1000
 
