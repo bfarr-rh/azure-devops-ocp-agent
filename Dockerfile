@@ -26,7 +26,6 @@ RUN dnf update -y && \
     chmod -R 775 /home/podman && \
     chmod -R 775 /etc/alternatives && \
     chmod -R 775 /var/lib/alternatives && \
-    chmod -R 775 /usr/lib/jvm && \
     chmod -R 775 /usr/bin && \
     chmod 775 /usr/share/man/man1 && \
     mkdir -p /var/lib/origin && \
