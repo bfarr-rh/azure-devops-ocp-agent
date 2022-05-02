@@ -53,7 +53,7 @@ oc policy add-role-to-user registry-editor system:serviceaccount:<project_name>:
 5. To get podman running correctly in openshift you'll need to add a custom scc
 ````
 oc create -f https://raw.githubusercontent.com/bfarr-rh/azure-devops-ocp-agent/master/openshift/nonrootbuilder-scc.yaml
-oc policy add-scc-to-user nonrootbuilder system:serviceaccount:<project_name>:azure-agent-sa
+oc adm policy add-scc-to-user nonrootbuilder system:serviceaccount:<project_name>:azure-agent-sa
 ````
 6. When developing an azure pipeline, rather than using the default pool setup use within the pipeline
 For example where the pool name is OpenShift-Agent, your pipeline yaml file will start with something like below.
