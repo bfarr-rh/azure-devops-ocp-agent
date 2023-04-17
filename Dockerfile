@@ -19,7 +19,7 @@ ENV _BUILDAH_STARTED_IN_USERNS="" \
 USER root
 
 # Setup for azure and tools
-RUN dnf update -y && \
+RUN dnf upgrade -y && \
     dnf install -y --setopt=tsflags=nodocs git skopeo podman-docker --exclude container-selinux && \
     dnf clean all && \
     chown -R podman:0 /home/podman && \
