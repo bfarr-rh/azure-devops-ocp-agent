@@ -140,6 +140,17 @@ objects:
             limits: 
               cpu: ${CPU_LIMIT}
               memory: ${MEMORY_LIMIT}
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - /azp/agent/bin/Agent.Listener
+                  - remove
+                  - '--auth'
+                  - PAT
+                  - '--token'
+                  - $AZP_TOKEN
         triggers:
         - type: ConfigChange
         - imageChangeParams:
