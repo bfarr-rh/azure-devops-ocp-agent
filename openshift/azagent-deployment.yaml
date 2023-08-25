@@ -145,12 +145,10 @@ objects:
               exec:
                 command:
                   - /bin/sh
-                  - /azp/agent/bin/Agent.Listener
-                  - remove
-                  - '--auth'
-                  - PAT
-                  - '--token'
-                  - $AZP_TOKEN
+                  - '-c'
+                  - >-
+                    /azp/agent/bin/Agent.Listener remove --auth PAT --token
+                    $AZP_TOKEN
         triggers:
         - type: ConfigChange
         - imageChangeParams:
