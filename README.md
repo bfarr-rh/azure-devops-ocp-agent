@@ -75,5 +75,19 @@ https://github.com/bfarr-rh/dot-net-examples/blob/master/azure-pipelines.yml
 ## Scaling Agents
 The agent can be scaled using the Deployment, this is not fully tested , but each agent will register with its pod name as a suffix to ensure AzureDevops can register with a unique name.
 
+## Agent will unregister itself
+A pre stop lifecycle event in the pod should cause the agent to remove itself from the Agent pool. The following deplpoyment is responsible for removing the agent.
+```` 
+lifecycle:
+  preStop:
+    exec:
+      command:
+        - /bin/sh
+        - '-c'
+        - >-
+          /azp/agent/bin/Agent.Listener remove --auth PAT --token
+          $AZP_TOKEN
+````
+                    
 ## Updating the Agent
 Note the "Update all agents" button will not work with this containerised version of the agent. Simply build a new base agent as per the prerequisite steps.
